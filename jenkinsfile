@@ -1,0 +1,26 @@
+pipeline {
+  agent { label 'jenkins-agent' }
+  tools {
+    jdk 'java17'
+  }
+
+  stages {
+    stage("cleanup workspace"){
+      steps{
+        cleanWs()
+      }
+    }
+
+    stage("Checkout from SCM"){
+      steps{
+        git branch: 'main', credentialsId: 'github', url: 'https://github.com/aadil611/noteverse-backend.git'
+      }
+    }
+
+    stage("Build Application"){
+      steps{
+        sh "echo 'building application'"
+      }
+    }
+  }
+}
