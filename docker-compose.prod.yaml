@@ -1,0 +1,40 @@
+services:
+  noteverse:
+    build: 
+      context: ./noteverse
+      dockerfile: Dockerfile.prod
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+    volumes:
+      - static_volume:/home/noteverse/staticfiles
+      - media_volume:/home/noteverse/mediafiles
+      
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
+
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - noteverse
+    volumes:
+      - static_volume:/home/noteverse/staticfiles
+      - media_volume:/home/noteverse/mediafiles
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
