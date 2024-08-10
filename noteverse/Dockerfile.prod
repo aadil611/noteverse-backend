@@ -1,0 +1,77 @@
+############
+# BUILDER  #
+############
+
+# pull the image
+FROM python:3.11.4-slim-buster as builder
+
+# set work dir
+WORKDIR /usr/src/noteverse
+
+# set env vars
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends gcc
+
+
+# lint
+RUN pip install --upgrade pip
+RUN pip install flake8==6.0.0
+COPY . /usr/src/noteverse/
+# RUN flake8 --ignore=E501,F401 .
+
+
+# install python dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/noteverse/wheels -r requirements.txt
+
+
+##########
+# FINAL  #
+##########
+
+# pull official image
+FROM python:3.11.4-slim-buster
+
+
+# create directory for noteverse user
+RUN mkdir -p /home/noteverse
+
+
+# create the app user
+RUN addgroup --system noteverse && adduser --system --group noteverse
+
+# create appropriate directories
+ENV HOME=/home
+ENV APP_HOME=/home/noteverse
+# RUN mkdir ${APP_HOME}
+RUN mkdir ${APP_HOME}/staticfiles
+RUN mkdir ${APP_HOME}/mediafiles
+WORKDIR ${APP_HOME}
+
+
+# install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+COPY --from=builder /usr/src/noteverse/wheels /wheels
+COPY --from=builder /usr/src/noteverse/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# copy entrypoint.prod.sh
+COPY ./entrypoint.prod.sh .
+RUN sed -i 's/\r$//g' ${APP_HOME}/entrypoint.prod.sh
+RUN chmod +x ${APP_HOME}/entrypoint.prod.sh
+
+# copy project
+COPY . ${APP_HOME}
+
+# chown all the files to the app user
+RUN chown -R noteverse:noteverse ${APP_HOME}
+
+# change to the app user
+USER noteverse
+
+# run entrypoint.prod.sh
+ENTRYPOINT [ "/home/noteverse/entrypoint.prod.sh" ]
