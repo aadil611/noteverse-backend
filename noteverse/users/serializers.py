@@ -24,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = get_user_model()
-        fields = ['email','password1','password2']
+        fields = ['email','name','password1','password2']
         extra_kwargs = {'password': {'write_only': True}}
         
         
@@ -34,4 +34,15 @@ class LoginSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         
         token['email'] = user.email
+        token['name'] = user.name
         return token
+    
+    
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        
+        # Add additional data to the response
+        data['email'] = self.user.email
+        data['name'] = self.user.name
+        
+        return data
