@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY","django-insecure-#&")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", False))
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "upload_test",
+    'notes',
 ]
 
 MIDDLEWARE = [
@@ -158,4 +159,4 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:1337","http://159.89.174.46:1337","http://noteverse.aadil611.live"]

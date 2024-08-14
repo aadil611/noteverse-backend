@@ -4,3 +4,6 @@ djangorestframework-simplejwt==5.3.1
 drf_yasg
 psycopg2-binary==2.9.6
 gunicorn==21.2.0
+pillow
+pytest
+pytest-django
