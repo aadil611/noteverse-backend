@@ -63,8 +63,8 @@ class Note(models.Model):
     likes = models.ManyToManyField(User, related_name='liked_notes', blank=True)
     favorites = models.ManyToManyField(User, related_name='favorite_notes', blank=True)
     views = models.IntegerField(default=0)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='notes')
-    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='notes')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='notes', blank=True, null=True)
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='notes', blank=True, null=True)
     visibility = models.CharField(max_length=7, choices=VISIBILITY_CHOICES, default=VISIBILITY_CHOICES[0][0])
 
     def __str__(self):
