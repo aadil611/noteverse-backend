@@ -49,7 +49,7 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'tags', 'thumbnail', 'description', 'data', 
             'owner', 'shared_statuses', 'likes_count', 'favorites_count', 
-            'views', 'visibility', 'category', 'subcategory'
+            'views', 'visibility', 'category', 'subcategory','created_at','updated_at'
         ]
 
 # Comment Serializer
