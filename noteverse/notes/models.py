@@ -66,6 +66,8 @@ class Note(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='notes', blank=True, null=True)
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='notes', blank=True, null=True)
     visibility = models.CharField(max_length=7, choices=VISIBILITY_CHOICES, default=VISIBILITY_CHOICES[0][0])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
