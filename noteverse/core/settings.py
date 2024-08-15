@@ -161,4 +161,8 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:1337","http://159.89.174.46:1337","http://noteverse.aadil611.live"]
+# CSRF_TRUSTED_ORIGINS = ["http://localhost:1337","http://159.89.174.46:1337","http://noteverse.aadil611.live","http://localhost:3000"]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3030',
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
