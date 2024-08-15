@@ -7,3 +7,4 @@ gunicorn==21.2.0
 pillow
 pytest
 pytest-django
+django-cors-headers
