@@ -1,4 +1,5 @@
 VISIBILITY_CHOICES = [
+        ('private', 'Private'),
         ('public', 'Public'),
-        ('private', 'Private')
+        ('shared', 'Shared'),
     ]
