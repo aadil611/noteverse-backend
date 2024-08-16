@@ -10,4 +10,4 @@ RUN touch /etc/nginx/logs/nginx-error.log
 
 COPY nginx.conf /etc/nginx/conf.d
 COPY fullchain.pem /etc/nginx/ssl/fullchain.pem
-COPY privkey.key /etc/nginx/ssl/privkey.pem
+COPY privkey.pem /etc/nginx/ssl/privkey.pem
