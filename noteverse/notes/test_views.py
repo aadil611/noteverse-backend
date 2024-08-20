@@ -289,7 +289,7 @@ def test_featured_notes():
     )
 
     client.force_authenticate(user=user)
-    response = client.post(f'/api/notes/{user.id}/get-featured-notes/')
+    response = client.get(f'/api/notes/get-featured-notes/')
     
     assert response.status_code == 200
     assert len(response.data) == 1

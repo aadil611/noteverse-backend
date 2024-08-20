@@ -58,14 +58,16 @@ class NoteViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['get'], url_path='get-shared-notes')
     def shared_notes(self, request):
+        if not self.request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'}, status=401)
         shared_statuses = SharedStatus.objects.filter(shared_with=self.request.user)
         shared_notes = [status.note for status in shared_statuses]
         serializer = NoteSerializer(shared_notes, many=True)
         return Response(serializer.data)
     
     
-    @action(detail=True, methods=['post'], url_path='get-featured-notes')
-    def featured_notes(self, request, pk=None):
+    @action(detail=False, methods=['get'], url_path='get-featured-notes')
+    def featured_notes(self, request):
         featured_notes = Note.objects.filter(visibility='public')
         serializer = NoteSerializer(featured_notes, many=True)
         return Response(serializer.data)
