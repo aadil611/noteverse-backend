@@ -1,11 +1,13 @@
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from .models import Category, SubCategory, SharedStatus, Tag, Note, Comment
 from .serializers import (
     CategorySerializer, SubCategorySerializer,
     SharedStatusSerializer, TagSerializer, NoteSerializer, CommentSerializer
 )
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -51,6 +53,22 @@ class NoteViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return queryset
         return queryset.filter(visibility='public')
+    
+        
+    
+    @action(detail=False, methods=['get'], url_path='get-shared-notes')
+    def shared_notes(self, request):
+        shared_statuses = SharedStatus.objects.filter(shared_with=self.request.user)
+        shared_notes = [status.note for status in shared_statuses]
+        serializer = NoteSerializer(shared_notes, many=True)
+        return Response(serializer.data)
+    
+    
+    @action(detail=True, methods=['post'], url_path='get-featured-notes')
+    def featured_notes(self, request, pk=None):
+        featured_notes = Note.objects.filter(visibility='public')
+        serializer = NoteSerializer(featured_notes, many=True)
+        return Response(serializer.data)
 
 # Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):

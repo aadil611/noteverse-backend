@@ -40,7 +40,7 @@ class SharedStatus(models.Model):
     shared_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.note.title} shared by {self.shared_by.username} with {self.shared_with.username}"
+        return f"{self.note.title} shared by {self.shared_by.email} with {self.shared_with.email}"
 
 # Tag Model
 class Tag(models.Model):
@@ -55,7 +55,7 @@ class Tag(models.Model):
 class Note(models.Model):
 
     title = models.CharField(max_length=255)
-    tags = models.ManyToManyField(Tag, related_name='notes', blank=True, null=True)
+    tags = models.ManyToManyField(Tag, related_name='notes', blank=True)
     thumbnail = models.ImageField(upload_to='note_thumbnails/', blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     data = models.TextField(blank=True, null=True)

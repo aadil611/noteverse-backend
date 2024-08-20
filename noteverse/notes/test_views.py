@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from notes.models import Category, SubCategory, Tag, Note, Comment, SharedStatus
 from .serializers import CommentSerializer
 
+
 User = get_user_model()
 
 @pytest.mark.django_db
@@ -34,8 +35,7 @@ def test_tag_list():
     assert response.data[0]['name'] == "Tag 1"
 
 @pytest.mark.django_db
-def test_note_list():
-    client = APIClient()
+def test_note_list(api_client):
     user = User.objects.create_user(email="user@domain.com", password="password")
     category = Category.objects.create(title="Category 1", description="Description")
     subcategory = SubCategory.objects.create(title="SubCategory 1", description="Description", category=category)
@@ -44,8 +44,10 @@ def test_note_list():
         title="Note 1", description="Description", data="Some data",
         owner=user, category=category, subcategory=subcategory
     )
-    response = client.get('/api/notes/')
+    response = api_client.get('/api/notes/')
     assert response.status_code == 200
+    # print("##################################",type(response.data),response.data)
+    
     assert response.data[0]['title'] == "Note 1"
 
 @pytest.mark.django_db
@@ -77,7 +79,7 @@ def test_shared_status_list():
     shared_status = SharedStatus.objects.create(shared_by=user1, shared_with=user2, permissions='view', note=note)
     response = client.get('/api/sharedstatuses/')
     assert response.status_code == 200
-    assert response.data[0]['shared_by'] == user1.email
+    assert response.data[0]['shared_by'] == user1.id
 
 
 
@@ -245,3 +247,50 @@ def test_create_shared_status(api_client, create_note, create_unique_user):
     assert response.status_code == 201
     assert response.data['permissions'] == "view"
     # assert SharedStatus.objects.filter(shared_by=create_unique_user, shared_with=create_unique_user, permissions="view").exists()
+
+
+
+@pytest.mark.django_db
+def test_shared_notes():
+    client = APIClient()
+    user1 = User.objects.create_user(email="user1@domain.com", password="password")
+    user2 = User.objects.create_user(email="user2@domain.com", password="password")
+
+    category = Category.objects.create(title="Category 1", description="Description")
+    subcategory = SubCategory.objects.create(title="SubCategory 1", description="Description", category=category)
+
+    note = Note.objects.create(
+        title="Note 1", description="Description", data="Some data",
+        owner=user1, category=category, subcategory=subcategory
+    )
+
+    SharedStatus.objects.create(note=note, shared_by=user1, shared_with=user2, permissions='view')
+
+    client.force_authenticate(user=user2)
+    response = client.get('/api/notes/get-shared-notes/')
+    
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]['title'] == "Note 1"
+    
+    
+    
+@pytest.mark.django_db
+def test_featured_notes():
+    client = APIClient()
+    user = User.objects.create_user(email="user@domain.com", password="password")
+
+    category = Category.objects.create(title="Category 1", description="Description")
+    subcategory = SubCategory.objects.create(title="SubCategory 1", description="Description", category=category)
+
+    Note.objects.create(
+        title="Note 1", description="Description", data="Some data",
+        owner=user, category=category, subcategory=subcategory, visibility='public'
+    )
+
+    client.force_authenticate(user=user)
+    response = client.post(f'/api/notes/{user.id}/get-featured-notes/')
+    
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]['title'] == "Note 1"
