@@ -145,7 +145,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=25),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "USER_ID_CLAIM": "id",
 }
@@ -161,7 +161,7 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 
 
-# CSRF_TRUSTED_ORIGINS = ["http://localhost:1337","http://159.89.174.46:1337","http://noteverse.aadil611.live","http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:1337","http://159.89.174.46:1337","http://noteverse.aadil611.live","http://localhost:3000","https://aadil611.live"]
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3030',
 # ]

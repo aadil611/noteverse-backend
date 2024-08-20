@@ -21,14 +21,25 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 
 # SharedStatus Serializer
+# class SharedStatusSerializer(serializers.ModelSerializer):
+#     shared_by = serializers.StringRelatedField()
+#     shared_with = serializers.StringRelatedField()
+#     note = serializers.StringRelatedField()
+
+#     class Meta:
+#         model = SharedStatus
+#         fields = ['id', 'shared_by', 'shared_with', 'permissions', 'shared_at', 'note']
+
+
 class SharedStatusSerializer(serializers.ModelSerializer):
-    shared_by = serializers.StringRelatedField()
-    shared_with = serializers.StringRelatedField()
-    note = serializers.StringRelatedField()
+    shared_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    shared_with = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    note = serializers.PrimaryKeyRelatedField(queryset=Note.objects.all())
 
     class Meta:
         model = SharedStatus
         fields = ['id', 'shared_by', 'shared_with', 'permissions', 'shared_at', 'note']
+
 
 # Tag Serializer
 class TagSerializer(serializers.ModelSerializer):

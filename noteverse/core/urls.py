@@ -24,6 +24,7 @@ from upload_test.views import image_upload
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 ...
 
 schema_view = get_schema_view(
@@ -46,6 +47,7 @@ urlpatterns = [
     path('api/signup/', SignUpView.as_view(), name='signup'),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include('users.urls')),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
