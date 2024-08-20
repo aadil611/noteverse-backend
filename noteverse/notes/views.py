@@ -51,6 +51,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Note.objects.all()
         if self.request.user.is_authenticated:
+            queryset = queryset.filter(owner=self.request.user)
             return queryset
         return queryset.filter(visibility='public')
     
