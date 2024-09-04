@@ -66,5 +66,5 @@ def test_shared_status_serializer():
     )
     shared_status = SharedStatus.objects.create(shared_by=user1, shared_with=user2, permissions='view', note=note)
     serializer = SharedStatusSerializer(shared_status)
-    assert serializer.data["shared_by"] == user1.email
-    assert serializer.data["shared_with"] == user2.email
+    assert serializer.data["shared_by"] == user1.id
+    assert serializer.data["shared_with"] == user2.id
