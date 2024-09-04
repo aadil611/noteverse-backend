@@ -32,6 +32,12 @@ class SharedStatusViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(shared_by=self.request.user)
+        
+    def retrieve(self, request, *args, **kwargs):
+        print("Retrieve >>>>>>>>>>>>>>>>>>>>> ", kwargs)
+        id = kwargs.get('pk')
+        shared_statuses = SharedStatus.objects.filter(note_id=id)
+        return Response(SharedStatusSerializer(shared_statuses, many=True).data)
 
 # Tag ViewSet
 class TagViewSet(viewsets.ModelViewSet):
@@ -54,6 +60,15 @@ class NoteViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(owner=self.request.user)
             return queryset
         return queryset.filter(visibility='public')
+    
+    def retrieve(self, request, *args, **kwargs):
+        # return note with given id
+        try:
+            note = Note.objects.get(id=kwargs.get('pk'))
+            serializer = NoteSerializer(note)
+            return Response(serializer.data)
+        except Note.DoesNotExist:
+            return Response({'detail': 'Not found.'}, status=404)
     
         
     
