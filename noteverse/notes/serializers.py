@@ -35,9 +35,9 @@ class SharedStatusSerializer(serializers.ModelSerializer):
     # shared_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     # shared_with = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     # note = serializers.PrimaryKeyRelatedField(queryset=Note.objects.all())
-    shared_by = serializers.StringRelatedField()
-    shared_with = serializers.StringRelatedField()
-    note = serializers.StringRelatedField()
+    # shared_by = serializers.StringRelatedField()
+    # shared_with = serializers.StringRelatedField()
+    # note = serializers.StringRelatedField()
 
     class Meta:
         model = SharedStatus
