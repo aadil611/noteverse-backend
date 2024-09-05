@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
-from .serializers import UserSerializer, LoginSerializer
+from .serializers import UserSerializer, LoginSerializer, UserReadOnlySerializer
 from rest_framework import generics
 from rest_framework_simplejwt.views import TokenObtainPairView
 from drf_yasg.utils import swagger_auto_schema
@@ -38,10 +38,13 @@ class LoginView(TokenObtainPairView):
 @api_view(['GET'])
 def user_list(request,email=None):
     if email:
-        user = get_user_model().objects.get(email=email)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+        try:
+            user = get_user_model().objects.get(email=email)
+            serializer = UserReadOnlySerializer(user)
+            return Response(serializer.data)
+        except get_user_model().DoesNotExist:
+            return Response({'message': 'User not found'}, status=404)
     users = get_user_model().objects.all()
     users = users.filter(is_active=True)
-    serializer = UserSerializer(users, many=True)
+    serializer = UserReadOnlySerializer(users, many=True)
     return Response(serializer.data)
