@@ -44,5 +44,12 @@ class LoginSerializer(TokenObtainPairSerializer):
         # Add additional data to the response
         data['email'] = self.user.email
         data['name'] = self.user.name
+        data['id'] = self.user.id
         
         return data
+    
+    
+class UserReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['email','name','id']
