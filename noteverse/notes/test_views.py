@@ -79,7 +79,7 @@ def test_shared_status_list():
     shared_status = SharedStatus.objects.create(shared_by=user1, shared_with=user2, permissions='view', note=note)
     response = client.get('/api/sharedstatuses/')
     assert response.status_code == 200
-    assert response.data[0]['shared_by'] == user1.id
+    assert response.data[0]['shared_by'] == user1.email
 
 
 
@@ -241,7 +241,8 @@ def test_create_shared_status(api_client, create_note, create_unique_user):
         "shared_by": user.id,
         "shared_with": shared_with_user.id,
         "permissions": "view",
-        "note": note.id
+        "note": note.id,
+        "shared_with_id": shared_with_user.id
     }
     response = api_client.post('/api/sharedstatuses/', data, format='json')
     assert response.status_code == 201
