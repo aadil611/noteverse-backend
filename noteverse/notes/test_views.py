@@ -295,3 +295,27 @@ def test_featured_notes():
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]['title'] == "Note 1"
+
+
+@pytest.mark.django_db
+def test_comment_reply(api_client, create_note, create_unique_user):
+    note = create_note  # Use the fixture directly
+    user = create_unique_user  # Use the fixture directly
+
+    data = {
+        "note": note.id,  # Access the ID of the created note
+        "user": user.id,  # Access the ID of the created user
+        "text": "This is a comment"
+    }
+
+    response = api_client.post('/api/comments/', data, format='json')
+    assert response.status_code == 201
+    reply1 = api_client.post(f'/api/comments/', {"note": note.id, "user": user.id, "text": "Reply 1", "parent_comment": response.data['id']}, format='json')
+    reply2 = api_client.post(f'/api/comments/', {"note": note.id, "user": user.id, "text": "Reply 2", "parent_comment": response.data['id']}, format='json')
+    
+    replies = api_client.get(f'/api/comments/{response.data["id"]}/reply/')
+    assert replies.status_code == 200
+    assert len(replies.data) == 2
+    assert replies.data[0]['text'] == "Reply 1"
+    assert replies.data[1]['text'] == "Reply 2"
+    

@@ -7,6 +7,10 @@ from .serializers import (
     SharedStatusSerializer, TagSerializer, NoteSerializer, CommentSerializer
 )
 from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 User = get_user_model()
@@ -102,3 +106,18 @@ class CommentViewSet(viewsets.ModelViewSet):
         if note_id:
             return Comment.objects.filter(note_id=note_id)
         return super().get_queryset()
+
+    # @action(detail=True, methods=['get'], url_path='replies')
+    # def replies(self, request, pk=None):
+    #     comment = self.get_object()
+    #     replies = comment.replies.all()
+    #     serializer = CommentSerializer(replies, many=True)
+    #     return Response(serializer.data)
+    
+@api_view(['GET'])
+def comment_reply(request, pk=None):
+    logger.info("Comment Reply >>>>>>>>>>>>>>>>>>>>> ", pk)
+    comment = Comment.objects.get(id=pk)
+    replies = comment.replies.all()
+    serializer = CommentSerializer(replies, many=True)
+    return Response(serializer.data)
