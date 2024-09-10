@@ -104,7 +104,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         note_id = self.request.query_params.get('note_id')
         if note_id:
-            return Comment.objects.filter(note_id=note_id)
+            return Comment.objects.filter(note_id=note_id, parent_comment=None)
         return super().get_queryset()
 
     # @action(detail=True, methods=['get'], url_path='replies')
