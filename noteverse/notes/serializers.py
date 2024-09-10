@@ -80,3 +80,9 @@ class CommentSerializer(serializers.ModelSerializer):
         if obj.replies.exists():
             return CommentSerializer(obj.replies.all(), many=True).data
         return None
+    
+    def to_representation(self, instance):
+        # add user_name
+        rep = super().to_representation(instance)
+        rep['user_name'] = instance.user.name
+        return rep
