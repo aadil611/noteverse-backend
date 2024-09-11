@@ -319,3 +319,24 @@ def test_comment_reply(api_client, create_note, create_unique_user):
     assert replies.data[0]['text'] == "Reply 1"
     assert replies.data[1]['text'] == "Reply 2"
     
+    
+@pytest.mark.django_db
+def test_like_note_view(api_client, create_note):
+    note = create_note
+    response = api_client.post(f'/api/notes/{note.id}/like/')
+    print("Note response ===>",response.data)
+    assert response.status_code == 200
+    assert response.data['likes_count'] == 1
+    response = api_client.post(f'/api/notes/{note.id}/like/')
+    assert response.status_code == 200
+    assert response.data['likes_count'] == 0
+    
+@pytest.mark.django_db
+def test_favorite_note_view(api_client, create_note):
+    note = create_note
+    response = api_client.post(f'/api/notes/{note.id}/favorite/')
+    assert response.status_code == 200
+    assert response.data['favorites_count'] == 1
+    response = api_client.post(f'/api/notes/{note.id}/favorite/')
+    assert response.status_code == 200
+    assert response.data['favorites_count'] == 0
