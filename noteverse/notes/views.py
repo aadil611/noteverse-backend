@@ -121,3 +121,30 @@ def comment_reply(request, pk=None):
     replies = comment.replies.all()
     serializer = CommentSerializer(replies, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def like_note_view(request, pk=None):
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication credentials were not provided.'}, status=401)
+    note = Note.objects.get(id=pk)
+    if request.user in note.likes.all():
+        logger.info("Removing Like >>>>>>>>>>>>>>>>>>>>> ")
+        note.likes.remove(request.user)
+    else:
+        logger.info("Adding Like >>>>>>>>>>>>>>>>>>>>> ")
+        note.likes.add(request.user)
+    return Response({'detail': 'Success.', 'likes_count': note.likes.count()})
+
+@api_view(['POST'])
+def favorite_note_view(request, pk=None):
+    if not request.user.is_authenticated:
+        return Response({'detail': 'Authentication credentials were not provided.'}, status=401)
+    note = Note.objects.get(id=pk)
+    if request.user in note.favorites.all():
+        logger.info("Removing from Favorite >>>>>>>>>>>>>>>>>>>>> ")
+        note.favorites.remove(request.user)
+    else:
+        logger.info("Adding to Favorite >>>>>>>>>>>>>>>>>>>>> ")
+        note.favorites.add(request.user)
+    return Response({'detail': 'Success.', 'favorites_count': note.favorites.count()})
